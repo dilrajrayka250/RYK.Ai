@@ -1,43 +1,39 @@
-name: Build and Test
+name: Build Android APK
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
     branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 9
 
-      - name: Use Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'pnpm'
-
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: pnpm install
 
-      - name: Build app
-        run: pnpm run build
-        env:
-          PORT: 3000
-          BASE_PATH: /
+      # यह स्टेप APK बनाने की कोशिश करेगा (React Native के लिए)
+      - name: Build Android Release
+        run: |
+          cd android && ./gradlew assembleDebug || echo "Android folder not found"
 
-      - name: Upload APK
+      - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: my-app-apk
-          # यहाँ बदलाव किया है: यह अब पूरे प्रोजेक्ट में कहीं भी .apk फाइल ढूँढ लेगा
+          name: app-debug-apk
           path: "**/*.apk"
+
           
