@@ -38,5 +38,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: my-app-apk
-          path: app/build/outputs/apk/debug/*.apk
+          # यहाँ बदलाव किया है: यह अब पूरे प्रोजेक्ट में कहीं भी .apk फाइल ढूँढ लेगा
+          path: "**/*.apk"
           
