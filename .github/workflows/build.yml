@@ -30,4 +30,7 @@ jobs:
 
       - name: Build app
         run: pnpm run build
+        env:
+          PORT: 3000
+
         
