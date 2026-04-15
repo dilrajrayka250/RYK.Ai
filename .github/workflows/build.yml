@@ -23,27 +23,22 @@ jobs:
           version: 9
 
       - name: Install dependencies
-        # यहाँ बदलाव किया है ताकि Lockfile वाली एरर न आए
         run: pnpm install --no-frozen-lockfile
 
-      - name: Build Android Release
+      - name: Build Android
         run: |
           if [ -d "android" ]; then
-            cd android && ./gradlew assembleDebug
+            cd android && ./gradlew assembleRelease
           else
-            echo "Android folder not found, checking Expo build..."
-            npx expo export --platform android || echo "Expo export failed"
+            echo "Android folder not found, trying Expo build..."
+            npx expo export --platform android || echo "Build failed"
           fi
 
-      - name: Upload Artifacts
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug-apk
-          path: "**/*.apk- name:
-          Upload APK
-  uses: actions/upload-artifact@v4
-  with:
-    name: app-release
-    path: android/app/build/outputs/apk/release/*.apk
-    
-          
+          name: app-release
+          path: |
+            android/app/build/outputs/apk/release/*.apk
+            android/app/build/outputs/apk/debug/*.apk
+            
