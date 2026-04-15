@@ -1,5 +1,4 @@
 name: Build Android APK
-
 on:
   push:
     branches: [ main ]
@@ -27,18 +26,16 @@ jobs:
 
       - name: Build Android
         run: |
+          # यह कमांड पूरे प्रोजेक्ट में कहीं भी APK ढूँढकर उसे जनरेट करने की कोशिश करेगी
           if [ -d "android" ]; then
-            cd android && ./gradlew assembleRelease
+            cd android && ./gradlew assembleDebug
           else
-            echo "Android folder not found, trying Expo build..."
-            npx expo export --platform android || echo "Build failed"
+            npx expo run:android --variant debug || echo "Manual build failed, checking files..."
           fi
 
-      - name: Upload APK
+      - name: Upload All APKs
         uses: actions/upload-artifact@v4
         with:
-          name: app-release
-          path: |
-            android/app/build/outputs/apk/release/*.apk
-            android/app/build/outputs/apk/debug/*.apk
-            
+          name: my-app-files
+          path: "**/*.apk" # यह पूरे प्रोजेक्ट में जहाँ भी APK बनेगी, उसे खींच लाएगा
+          
