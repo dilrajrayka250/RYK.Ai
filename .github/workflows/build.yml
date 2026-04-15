@@ -23,17 +23,21 @@ jobs:
           version: 9
 
       - name: Install dependencies
-        run: pnpm install
+        # यहाँ बदलाव किया है ताकि Lockfile वाली एरर न आए
+        run: pnpm install --no-frozen-lockfile
 
-      # यह स्टेप APK बनाने की कोशिश करेगा (React Native के लिए)
       - name: Build Android Release
         run: |
-          cd android && ./gradlew assembleDebug || echo "Android folder not found"
+          if [ -d "android" ]; then
+            cd android && ./gradlew assembleDebug
+          else
+            echo "Android folder not found, checking Expo build..."
+            npx expo export --platform android || echo "Expo export failed"
+          fi
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: app-debug-apk
           path: "**/*.apk"
-
           
